@@ -17,6 +17,7 @@
 #ifndef __OCU_TESTS_TEST_FRAMEWORK_H__
 #define __OCU_TESTS_TEST_FRAMEWORK_H__
 
+#include <cstdio>
 #include <string>
 #include <vector>
 #include "ocuutil/defines.h"

@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include <cstdio>
 #include "ocustorage/gridnetcdf.h"
 
 namespace ocu {
