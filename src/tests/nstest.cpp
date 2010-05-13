@@ -89,6 +89,7 @@ void run()
       for (k=0; k < nz; k++) {
         params.init_temp.at(i,j,k) = (i < nx / 2) ? -1 : 1;
       }
+  params.max_divergence = 1e-4;
 
   UNITTEST_ASSERT_TRUE(eqn.set_parameters(params));
 
@@ -109,7 +110,7 @@ void run()
   timer.start();
   for (int t=0; t < 10; t++) {
     printf("Frame %d\n", t);
-    eqn.advance(dt);
+    UNITTEST_ASSERT_TRUE(eqn.advance(dt));
     // trace points
     /*
     sample_points_mac_grid_3d(vx, vy, vz, posx, posy, posz, eqn.get_u(), eqn.get_v(), eqn.get_w(), params.flow_bc, 1,1,1);
