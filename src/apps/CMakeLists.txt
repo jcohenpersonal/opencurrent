@@ -12,8 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License
 
+SET(OCU_REQUIRED_LIBS "")
 
-FIND_PACKAGE(NetCDF)
+IF (OCU_NETCDF_ENABLED)
+  FIND_PACKAGE(NetCDF)
+  SET(OCU_REQUIRED_LIBS "${OCU_REQUIRED_LIBS} ${NetCDF_LIBRARY}")
+ENDIF (OCU_NETCDF_ENABLED)
 
 LINK_DIRECTORIES(${CUDAPARSE_BINARY_DIR}/ocuequation 
   ${CUDAPARSE_BINARY_DIR}/ocustorage
@@ -25,8 +29,8 @@ ADD_EXECUTABLE(incompress incompress.cpp)
 CUDA_ADD_EXECUTABLE(cubicrayleigh cubicrayleigh.cpp eqn_cubicrayleigh3d.cu eqn_cubicrayleigh3d.h)
 ADD_EXECUTABLE(pcg pcg.cpp)
 
-TARGET_LINK_LIBRARIES(testapp ocuequation ocustorage ocuutil ${NetCDF_LIBRARY})
-TARGET_LINK_LIBRARIES(lockex ocuequation ocustorage ocuutil ${NetCDF_LIBRARY})
-TARGET_LINK_LIBRARIES(incompress ocuequation ocustorage ocuutil ${NetCDF_LIBRARY})
-TARGET_LINK_LIBRARIES(cubicrayleigh ocuequation ocustorage ocuutil ${NetCDF_LIBRARY})
-TARGET_LINK_LIBRARIES(pcg ocuequation ocustorage ocuutil ${NetCDF_LIBRARY})
+TARGET_LINK_LIBRARIES(testapp ocuequation ocustorage ocuutil ${OCU_REQUIRED_LIBS})
+TARGET_LINK_LIBRARIES(lockex ocuequation ocustorage ocuutil ${OCU_REQUIRED_LIBS})
+TARGET_LINK_LIBRARIES(incompress ocuequation ocustorage ocuutil ${OCU_REQUIRED_LIBS})
+TARGET_LINK_LIBRARIES(cubicrayleigh ocuequation ocustorage ocuutil ${OCU_REQUIRED_LIBS})
+TARGET_LINK_LIBRARIES(pcg ocuequation ocustorage ocuutil ${OCU_REQUIRED_LIBS})

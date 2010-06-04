@@ -18,10 +18,15 @@
 #define __OCU_STORAGE_GRID_NETCFD_H__
 
 #include "ocustorage/grid3d.h"
-#include "netcdf.h"
 #include <map>
 #include <string>
 #include <vector>
+
+#ifdef OCU_NETCDF
+#include "netcdf.h"
+#else
+typedef int nc_type;
+#endif
 
 namespace ocu {
 

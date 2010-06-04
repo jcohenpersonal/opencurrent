@@ -20,7 +20,7 @@
 
 using namespace ocu;
 
-#ifdef OCU_DOUBLESUPPORT
+#if defined(OCU_DOUBLESUPPORT) && defined(OCU_NETCDF)
 
 int main(int argc, const char **argv) 
 {
@@ -131,7 +131,7 @@ int main(int argc, const char **argv)
 
 int main(int argc, const char **argv) 
 {
-  printf("This program can only be compiled with double precision support\n");
+  printf("This program can only be compiled with double precision and NetCDF support\n");
   return -1;
 }
 

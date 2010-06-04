@@ -15,6 +15,9 @@
  */
 
 #include "tests/testframework.h"
+
+#ifdef OCU_NETCDF
+
 #include <netcdf.h>
 
 #include "ocustorage/gridnetcdf.h"
@@ -153,3 +156,5 @@ void run() {
 }
 
 DECLARE_UNITTEST_END(GridNetCDFTest);
+
+#endif

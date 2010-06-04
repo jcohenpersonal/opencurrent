@@ -143,6 +143,7 @@ void run_sim(int nx, int ny, int nz, const char *out_file)
   timer.start();
   int next_frame = 1;
 
+#ifdef OCU_NETCDF
   NetCDFGrid3DWriter file_writer;
   if (out_file) {
     file_writer.open(out_file, eqn.nx(), eqn.ny(), eqn.nz(), eqn.hx(), eqn.hy(), eqn.hz());
@@ -151,6 +152,7 @@ void run_sim(int nx, int ny, int nz, const char *out_file)
     file_writer.define_variable("v", NC_DOUBLE, GS_V_FACE);
     file_writer.define_variable("w", NC_DOUBLE, GS_W_FACE);
   }
+#endif
 
   Grid3DHost<T> h_temp, h_u, h_v, h_w;
   h_temp.init_congruent(eqn.get_temperature());
@@ -171,6 +173,7 @@ void run_sim(int nx, int ny, int nz, const char *out_file)
     printf(".");
     fflush(stdout);
 
+#ifdef OCU_NETCDF
     // write the output
     if (out_file && t > time_level * dt) {
       file_writer.add_time_level(t, time_level);
@@ -184,13 +187,16 @@ void run_sim(int nx, int ny, int nz, const char *out_file)
       file_writer.add_data("v", h_v, time_level);
       file_writer.add_data("w", h_w, time_level);
     }
+#endif
 
     steps++;
   }
 
+#ifdef OCU_NETCDF
   if (out_file) {
     file_writer.close();
   }
+#endif
 
   printf("\nTotal elapsed: %f sec, %d steps, %f sec/step\n", total_time, steps, total_time/steps);
   global_timer_print();

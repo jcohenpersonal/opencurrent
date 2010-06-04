@@ -39,8 +39,13 @@
 #  	OCU_DOUBLESUPPORT / OCU_NODOUBLESUPPORT - whether the device supports double precision floating point
 #	OCU_SM10, OCU_SM11, OCU_SM12, OCU_SM13 - which sm is selected
 #
+# OCU_NETCDF_ENABLED
+#	When set to false, all NetCDF functionality will result in a run-time error.  
+#	This allows for building the project without requiring NetCDF to be installed.
+#
 # OCU_NETCDF4_SUPPORT_ENABLED
 # 	Whether the netcdf lib was compiled with NetCDF4 support or not.  
+# 	OCU_NETCDF_ENABLED must be set to TRUE for this setting to have any effect.
 # 	The library will compile either way, it will just not be able to use some of the
 # 	newer features found in NetCDF4 like file compression. 
 #
@@ -70,6 +75,7 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio")
 #
 
   SET(CUDA_TOOLKIT_ROOT_DIR "C:/CUDA")
+  SET(OCU_NETCDF_ENABLED TRUE)
   SET(OCU_NETCDF4_SUPPORT_ENABLED TRUE)
 
 # Uncomment to hard-code a location, otherwise CMake will search for it in the normal paths
@@ -83,6 +89,7 @@ else()
 #
 
   SET(CUDA_TOOLKIT_ROOT_DIR "/usr/local/cuda/")
+  SET(OCU_NETCDF_ENABLED TRUE)
   SET(OCU_NETCDF4_SUPPORT_ENABLED TRUE)
 
 # Uncomment to hard-code a location, otherwise CMake will search for it in the normal paths

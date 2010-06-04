@@ -18,7 +18,7 @@
 #include "ocuutil/imagefile.h"
 #include "ocuequation/eqn_diffusion1d.h"
 #include "ocuutil/timing_pool.h"
-#include "netcdf.h"
+
 
 using namespace ocu;
 
@@ -63,9 +63,6 @@ int main(int argc, char **argv)
     }
   }
 
-  int ncid;
-  nc_create("test.nc", NC_CLOBBER, &ncid);
-  nc_close(ncid);
 
   img.write_ppm("solution.ppm");
 

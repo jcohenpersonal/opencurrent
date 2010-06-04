@@ -13,7 +13,13 @@
 #  limitations under the License
 
 
-FIND_PACKAGE(NetCDF)
+SET(OCU_REQUIRED_LIBS "")
+
+IF (OCU_NETCDF_ENABLED)
+  FIND_PACKAGE(NetCDF)
+  SET(OCU_REQUIRED_LIBS "${OCU_REQUIRED_LIBS} ${NetCDF_LIBRARY}")
+ENDIF (OCU_NETCDF_ENABLED)
+
 
 LINK_DIRECTORIES(${CUDAPARSE_BINARY_DIR}/ocuequation 
 	${CUDAPARSE_BINARY_DIR}/ocustorage
@@ -73,4 +79,4 @@ ADD_TEST(MultiReduceTest ${EXECUTABLE_OUTPUT_PATH}/utest -multi MultiReduceTest)
 ADD_TEST(MultigridMultiTest ${EXECUTABLE_OUTPUT_PATH}/utest -multi MultigridMultiTest)
 
 
-TARGET_LINK_LIBRARIES(utest ocuequation ocustorage ocuutil ${NetCDF_LIBRARY})
+TARGET_LINK_LIBRARIES(utest ocuequation ocustorage ocuutil ${OCU_REQUIRED_LIBS})

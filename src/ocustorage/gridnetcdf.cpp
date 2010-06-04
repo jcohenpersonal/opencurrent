@@ -22,6 +22,10 @@ namespace ocu {
 int  
 NetCDFGrid3DWriter::xcoord(float offset)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::xcoord - NetCDF support disabled\n"); 
+  return -1;
+#else
   if (_xcoordoffset_map.count(offset) == 0) {
     int dimid, dim_varid;
     char coord_name[1024];
@@ -46,11 +50,16 @@ NetCDFGrid3DWriter::xcoord(float offset)
   }
   
   return _xcoordoffset_map[offset];
+#endif
 }
 
 int  
 NetCDFGrid3DWriter::ycoord(float offset)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::ycoord - NetCDF support disabled\n"); 
+  return -1;
+#else
   if (_ycoordoffset_map.count(offset) == 0) {
     int dimid, dim_varid;
     char coord_name[1024];
@@ -75,11 +84,16 @@ NetCDFGrid3DWriter::ycoord(float offset)
   }
   
   return _ycoordoffset_map[offset];
+#endif
 }
 
 int  
 NetCDFGrid3DWriter::zcoord(float offset)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::zcoord - NetCDF support disabled\n"); 
+  return -1;
+#else
   if (_zcoordoffset_map.count(offset) == 0) {
     int dimid, dim_varid;
     char coord_name[1024];
@@ -104,36 +118,53 @@ NetCDFGrid3DWriter::zcoord(float offset)
   }
   
   return _zcoordoffset_map[offset];
-
+#endif
 }
 
 
 NetCDFGrid3DWriter::NetCDFGrid3DWriter()
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::NetCDFGrid3DWriter - NetCDF support disabled\n"); 
+#else
   _state = ST_CLOSED;
   _nc_id = -1;
   _time_id = -1;
   _nx = _ny = _nz = 0;
   _hx = _hy = _hz =  0;
+#endif
 }
 
 NetCDFGrid3DWriter::~NetCDFGrid3DWriter()
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::~NetCDFGrid3DWriter - NetCDF support disabled\n"); 
+#else
   if (is_open()) close();
+#endif
 }
 
 void 
 NetCDFGrid3DWriter::add_zero_time_level(int time_level)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::add_zero_time_level - NetCDF support disabled\n"); 
+#else
   if (time_level == 0 && _time_steps.size() == 0) {
     size_t dummy;
     add_time_level(0, dummy);
   }
+#endif
 }
 
 bool
 NetCDFGrid3DWriter::add_time_level(float time, size_t &level)
 { 
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::add_time_level - NetCDF support disabled\n"); 
+  return false;
+#else
+
   if (!is_open()) {
     printf("[ERROR] NetCDFGrid3DWriter::add_time_level - file must be open\n");
     return false;
@@ -154,10 +185,16 @@ NetCDFGrid3DWriter::add_time_level(float time, size_t &level)
   }
 
   return true; 
+#endif
 }
 
 bool NetCDFGrid3DWriter::open(const char *filename, int nx, int ny, int nz, float hx, float hy, float hz)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::open - NetCDF support disabled\n"); 
+  return false;
+#else
+
   if (is_open()) {
     printf("[ERROR] NetCDFGrid3DWriter::open - file already open\n");
     return false;
@@ -195,10 +232,15 @@ bool NetCDFGrid3DWriter::open(const char *filename, int nx, int ny, int nz, floa
   nc_def_var(_nc_id, "Time", NC_FLOAT, 1, &_time_id, &_time_var_id); 
 
   return true;
+#endif
 }
 
 bool NetCDFGrid3DWriter::define_variable(const char *name, nc_type var_type, GridStaggering stag, float offsetx, float offsety, float offsetz)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::define_variable - NetCDF support disabled\n"); 
+  return false;
+#else
   if (!is_open()) {
     printf("[ERROR] NetCDFGrid3DWriter::define_variable - file must be opened first\n");
     return false;
@@ -245,10 +287,15 @@ bool NetCDFGrid3DWriter::define_variable(const char *name, nc_type var_type, Gri
   _varid_map[name] = var;
 
   return true;
+#endif
 }
 
 bool NetCDFGrid3DWriter::add_data_internal(const char *name, const Grid3DUntyped &grid, nc_type data_type, void *data, int time_level)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::add_data_internal - NetCDF support disabled\n"); 
+  return false;
+#else
   if (!is_open()) {
     printf("[ERROR] NetCDFGrid3DWriter::add_data_internal - file must be opened first\n");
     return false;
@@ -302,26 +349,46 @@ bool NetCDFGrid3DWriter::add_data_internal(const char *name, const Grid3DUntyped
   }
     
   return true;
+#endif
 }
 
 
 bool NetCDFGrid3DWriter::add_data(const char *name, const Grid3DHostD &grid, int time_level)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::add_data - NetCDF support disabled\n"); 
+  return false;
+#else
   return add_data_internal(name, grid, NC_DOUBLE, (void *)&grid.at(0,0,0), time_level);
+#endif
 }
 
 bool NetCDFGrid3DWriter::add_data(const char *name, const Grid3DHostF &grid, int time_level)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::add_data - NetCDF support disabled\n"); 
+  return false;
+#else
   return add_data_internal(name, grid, NC_FLOAT, (void *)&grid.at(0,0,0), time_level);
+#endif
 }
 
 bool NetCDFGrid3DWriter::add_data(const char *name, const Grid3DHostI &grid, int time_level)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::add_data - NetCDF support disabled\n"); 
+  return false;
+#else
   return add_data_internal(name, grid, NC_INT, (void *)&grid.at(0,0,0), time_level);
+#endif
 }
 
 bool NetCDFGrid3DWriter::close()
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DWriter::close - NetCDF support disabled\n"); 
+  return false;
+#else
   int ok = nc_close(_nc_id);
   if (ok != NC_NOERR) {
     printf("[ERROR] NetCDFGrid3DWriter::close - Could not close \"%s\" with error %s\n", _filename.c_str(), nc_strerror(ok));
@@ -332,6 +399,7 @@ bool NetCDFGrid3DWriter::close()
   _varid_map.clear();
   _time_steps.clear();
   return true;
+#endif
 }
 
 
@@ -339,15 +407,24 @@ bool NetCDFGrid3DWriter::close()
 
 NetCDFGrid3DReader::NetCDFGrid3DReader()
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::NetCDFGrid3DReader - NetCDF support disabled\n"); 
+#else
+
   _nc_id = -1;
   _nx = _ny = _nz = 0;
   _hx = _hy = _hz =  0;
   _is_open = false;
+#endif
 }
 
 NetCDFGrid3DReader::~NetCDFGrid3DReader()
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::~NetCDFGrid3DReader - NetCDF support disabled\n"); 
+#else
   if (is_open()) close();
+#endif
 }
 
 
@@ -356,6 +433,10 @@ NetCDFGrid3DReader::~NetCDFGrid3DReader()
 bool 
 NetCDFGrid3DReader::open(const char *filename)
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::open - NetCDF support disabled\n"); 
+  return false;
+#else
   if (is_open()) {
     printf("[ERROR] NetCDFGrid3DReader::open - file already open\n");
     return false;
@@ -448,12 +529,19 @@ NetCDFGrid3DReader::open(const char *filename)
   }
 
   return true;
+#endif
 }
 
 
 std::vector<std::string> 
 NetCDFGrid3DReader::list_variables() const
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::list_variables - NetCDF support disabled\n"); 
+  std::vector<std::string> result;
+  return result;
+#else
+
   std::vector<std::string> result;
 
   for (std::map<std::string, Variable>::const_iterator iter = _varid_map.begin(); iter != _varid_map.end(); ++iter) {
@@ -461,11 +549,16 @@ NetCDFGrid3DReader::list_variables() const
   }
 
   return result;
+#endif
 }
 
 bool 
 NetCDFGrid3DReader::variable_type(const char *name, nc_type &type) const
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::variable_type - NetCDF support disabled\n"); 
+  return false;
+#else
   std::map<std::string, Variable>::const_iterator iter = _varid_map.find(name);
   if (iter == _varid_map.end())  {
     printf("[WARNING] NetCDFGrid3DReader::variable_type - variable \'%s\' not found\n", name);
@@ -475,11 +568,16 @@ NetCDFGrid3DReader::variable_type(const char *name, nc_type &type) const
   type = iter->second.type;
 
   return true;
+#endif
 }
 
 bool 
 NetCDFGrid3DReader::variable_size(const char *name, int &nx, int &ny, int &nz) const
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::variable_size - NetCDF support disabled\n"); 
+  return false;
+#else
   std::map<std::string, Variable>::const_iterator iter = _varid_map.find(name);
   if (iter == _varid_map.end())  {
     printf("[WARNING] NetCDFGrid3DReader::variable_size - variable \'%s\' not found\n", name);
@@ -491,12 +589,17 @@ NetCDFGrid3DReader::variable_size(const char *name, int &nx, int &ny, int &nz) c
   nz = iter->second.nz;
 
   return true;
+#endif
 }
 
 
 bool 
 NetCDFGrid3DReader::read_variable_internal(const char *name, const Grid3DUntyped &grid, nc_type data_type, void *data, int time_level) const
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::read_variable_internal - NetCDF support disabled\n"); 
+  return false;
+#else
   std::map<std::string, Variable>::const_iterator iter = _varid_map.find(name);
   if (iter == _varid_map.end())  {
     printf("[ERROR] NetCDFGrid3DReader::read_variable_internal - variable \'%s\' not found\n", name);
@@ -537,28 +640,48 @@ NetCDFGrid3DReader::read_variable_internal(const char *name, const Grid3DUntyped
   }
 
   return true;
+#endif
 }
 bool 
 NetCDFGrid3DReader::read_variable(const char *name, Grid3DHostD &grid, int time_level) const
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::read_variable - NetCDF support disabled\n"); 
+  return false;
+#else
   return read_variable_internal(name, grid, NC_DOUBLE, &grid.at(0,0,0), time_level);
+#endif
 }
 
 bool 
 NetCDFGrid3DReader::read_variable(const char *name, Grid3DHostF &grid, int time_level) const
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::read_variable - NetCDF support disabled\n"); 
+  return false;
+#else
   return read_variable_internal(name, grid, NC_FLOAT, &grid.at(0,0,0), time_level);
+#endif
 }
 
 bool 
 NetCDFGrid3DReader::read_variable(const char *name, Grid3DHostI &grid, int time_level) const
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::read_variable - NetCDF support disabled\n"); 
+  return false;
+#else
   return read_variable_internal(name, grid, NC_INT, &grid.at(0,0,0), time_level);
+#endif
 }
 
 
 bool NetCDFGrid3DReader::close()
 {
+#ifndef OCU_NETCDF
+  printf("[WARNING] NetCDFGrid3DReader::close - NetCDF support disabled\n"); 
+  return false;
+#else
   if (!is_open()) {
     printf("[ERROR] NetCDFGrid3DReader::close - file is not open\n");
     return false;
@@ -572,6 +695,7 @@ bool NetCDFGrid3DReader::close()
 
   _is_open = false;
   return true;
+#endif
 }
 
 
